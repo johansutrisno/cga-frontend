@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import axios from 'axios'
+
+interface Caption {
+  text: string;
+  hashtags: string[];
+}
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -16,7 +22,7 @@ export default function Home() {
     hashtags: '',
   })
   const [image, setImage] = useState<File | null>(null)
-  const [generatedCaption, setGeneratedCaption] = useState('')
+  const [generatedCaption, setGeneratedCaption] = useState<Caption[]>([])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -33,15 +39,75 @@ export default function Home() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const processCaptions = (rawText: string): Caption[] => {
+    const lines = rawText.split('\n');
+    return lines.map(line => {
+      const match = line.match(/\d+\.\s"(.+)"\s(.+)/);
+      if (match) {
+        return {
+          text: match[1],
+          hashtags: match[2].split(' ')
+        };
+      }
+      return { text: line, hashtags: [] };
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     // Here you would typically send the form data to an API to generate the caption
     // For this example, we'll just set a placeholder caption
-    setGeneratedCaption(`Generated caption based on: ${formData.keywords}. 
-    Style: ${formData.languageStyle}. Tone: ${formData.brandTone}. 
-    Length: ${formData.captionLength}. Audience: ${formData.targetAudience}. 
-    Hashtags: ${formData.hashtags}`)
+    // setGeneratedCaption(`Generated caption based on: ${formData.keywords}. 
+    // Style: ${formData.languageStyle}. Tone: ${formData.brandTone}. 
+    // Length: ${formData.captionLength}. Audience: ${formData.targetAudience}. 
+    // Hashtags: ${formData.hashtags}`)
+
+    const prompt = `Give me a list of creative captions for instagram with the writing style ${formData.languageStyle}, brand tone ${formData.brandTone}, target audience ${formData.targetAudience}, and hashtags ${formData.hashtags}. The desired caption length is ${formData.captionLength}, with the main theme being ${formData.keywords}.`
+
+    const request = {
+      "contents": [
+        {
+          "parts": [
+            {
+              "text": prompt
+            }
+          ]
+        }
+      ]
+    }
+
+    const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+
+    try {
+      const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${googleApiKey}`, request);
+      console.log('Response:', response.data);
+      // Handle success (e.g., show success message, clear form)
+      if (response.data && response.data.candidates && response.data.candidates.length > 0) {
+        const rawCaptions = response.data.candidates[0].content.parts[0].text;
+        const processedCaptions = processCaptions(rawCaptions);
+        setGeneratedCaption(processedCaptions);
+      } else {
+        console.error('Error:', 'There is no captions');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error (e.g., show error message)
+    }
   }
+
+   // Function to copy a single caption with hashtags
+  const copySingleCaption = (caption: Caption) => {
+    const hashtags = caption.hashtags.join(' '); // Convert array of hashtags to a single string
+    const textToCopy = `"${caption.text}" ${hashtags}`; // Combine caption text and hashtags
+
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        console.log('Caption copied to clipboard!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy caption: ', err);
+      });
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-8">
@@ -127,12 +193,26 @@ export default function Home() {
       <div className="w-full md:w-1/2">
         <h2 className="text-2xl font-bold mb-4">Generated Caption</h2>
         <div className="border p-4 rounded-md min-h-[200px]">
-          {generatedCaption ? (
-            <p>{generatedCaption}</p>
+          {generatedCaption.length > 0 ? (
+            <div>
+              {generatedCaption.map((caption, index) => (
+                <div key={index} className="mb-6 p-4 bg-gray-100 rounded">
+                  <p className="text-lg mb-2">"{caption.text}"</p>
+                  <div className="flex flex-wrap">
+                    {caption.hashtags.map((hashtag, hashIndex) => (
+                      <span key={hashIndex} className="mr-2 mb-2 px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-sm">
+                        {hashtag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <p className="text-muted-foreground">Your generated caption will appear here.</p>
           )}
         </div>
+
         {image && (
           <div className="mt-4">
             <h3 className="text-xl font-semibold mb-2">Uploaded Image</h3>
