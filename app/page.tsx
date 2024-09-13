@@ -95,20 +95,6 @@ export default function Home() {
     }
   }
 
-   // Function to copy a single caption with hashtags
-  const copySingleCaption = (caption: Caption) => {
-    const hashtags = caption.hashtags.join(' '); // Convert array of hashtags to a single string
-    const textToCopy = `"${caption.text}" ${hashtags}`; // Combine caption text and hashtags
-
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        console.log('Caption copied to clipboard!');
-      })
-      .catch((err) => {
-        console.error('Failed to copy caption: ', err);
-      });
-  };
-
   return (
     <div className="flex flex-col md:flex-row gap-8 p-8">
       <div className="w-full md:w-1/2">
