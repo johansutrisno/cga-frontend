@@ -183,7 +183,7 @@ export default function Home() {
             <div>
               {generatedCaption.map((caption, index) => (
                 <div key={index} className="mb-6 p-4 bg-gray-100 rounded">
-                  <p className="text-lg mb-2">"{caption.text}"</p>
+                  <p className="text-lg mb-2">{caption.text}</p>
                   <div className="flex flex-wrap">
                     {caption.hashtags.map((hashtag, hashIndex) => (
                       <span key={hashIndex} className="mr-2 mb-2 px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-sm">
