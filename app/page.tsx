@@ -24,6 +24,7 @@ export default function Home() {
   })
   const [image, setImage] = useState<File | null>(null)
   const [generatedCaption, setGeneratedCaption] = useState<Caption[]>([])
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -56,12 +57,6 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the form data to an API to generate the caption
-    // For this example, we'll just set a placeholder caption
-    // setGeneratedCaption(`Generated caption based on: ${formData.keywords}. 
-    // Style: ${formData.languageStyle}. Tone: ${formData.brandTone}. 
-    // Length: ${formData.captionLength}. Audience: ${formData.targetAudience}. 
-    // Hashtags: ${formData.hashtags}`)
 
     const prompt = `Give me a list of creative captions for instagram with the writing style ${formData.languageStyle}, brand tone ${formData.brandTone}, target audience ${formData.targetAudience}, and hashtags ${formData.hashtags}. The desired caption length is ${formData.captionLength}, with the main theme being ${formData.keywords}.`
 
@@ -80,6 +75,7 @@ export default function Home() {
     const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
     try {
+      setIsLoading(true);
       const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${googleApiKey}`, request);
       console.log('Response:', response.data);
       // Handle success (e.g., show success message, clear form)
@@ -92,7 +88,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error:', error);
-      // Handle error (e.g., show error message)
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -175,7 +172,7 @@ export default function Home() {
                 placeholder="e.g., #coffee #relax #motivation"
               />
             </div>
-            <Button type="submit">Generate Caption</Button>
+            <Button type="submit" isLoading={isLoading}>Generate Caption</Button>
           </form>
         </div>
         <div className="w-full md:w-1/2">
