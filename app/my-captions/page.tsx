@@ -3,7 +3,7 @@ const MyCaptionsPage = () => {
         <div className="text-center">
             <h1 className="text-5xl font-bold text-white mb-4">Coming Soon</h1>
             <p className="text-gray-300 text-lg">
-                We're working hard to bring you something amazing!
+                We&apos;re working hard to bring you something amazing!
             </p>
         </div>
     </div>)
