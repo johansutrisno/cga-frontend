@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from 'axios'
 import CaptionList from '@/components/shared/caption-list'
+import Image from 'next/image'
 
 interface Caption {
   text: string;
@@ -185,7 +186,7 @@ export default function Home() {
         {image && (
           <div className="mt-4">
             <h3 className="text-xl font-semibold mb-2">Uploaded Image</h3>
-            <img
+            <Image
               src={URL.createObjectURL(image)}
               alt="Uploaded image"
               className="max-w-full h-auto rounded-md"
