@@ -1,7 +1,13 @@
+"use client"
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Copy, Check, Bookmark, BookmarkCheck } from 'lucide-react';
+import { useUser } from "@clerk/nextjs";
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 interface Caption {
     number: number;
@@ -36,9 +42,14 @@ interface CaptionListProps {
 }
 
 const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
+    const { user } = useUser();
+    const { toast } = useToast()
+    const router = useRouter()
+
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     const [savingIndex, setSavingIndex] = useState<number | null>(null);
     const [savedIndexes, setSavedIndexes] = useState<number[]>([]);
+
 
     const parseGeminiResponse = (response: GeminiResponse): Caption[] => {
         try {
@@ -67,6 +78,23 @@ const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
     };
 
     const handleSave = async (caption: string, hashtags: string, index: number) => {
+        if (!user) {
+            toast({
+                title: "Authentication Required",
+                description: "Please sign in to save your captions. Your changes will not be saved until you authenticate.",
+                action: (
+                    <ToastAction
+                        altText="Sign In"
+                        onClick={() => router.push('/sign-in')}
+                    >
+                        Sign In
+                    </ToastAction>
+                ),
+                variant: "destructive",
+            })
+            return
+        }
+
         setSavingIndex(index);
         try {
             // TODO: Create save function
