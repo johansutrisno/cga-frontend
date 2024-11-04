@@ -59,7 +59,39 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const prompt = `Give me a list of creative captions for instagram with the writing style ${formData.languageStyle}, brand tone ${formData.brandTone}, target audience ${formData.targetAudience}, and hashtags ${formData.hashtags}. The desired caption length is ${formData.captionLength}, with the main theme being ${formData.keywords}. Give me a response captions list with json format number, caption, hashtag.`
+    const prompt = `Give me a list of creative captions for Instagram with the writing style ${formData.languageStyle}, brand tone ${formData.brandTone}, target audience ${formData.targetAudience}, and hashtags ${formData.hashtags}. The desired caption length is ${formData.captionLength}, with the main theme being ${formData.keywords}. Provide the response in a JSON format with "number", "caption", and "hashtags" fields.
+    
+    Example format:
+    \`\`\`json
+    [
+      {
+        "number": 1,
+        "caption": "Embrace the power of words. Let your pen dance across the page, weaving a tapestry of emotions and ideas. #WriteWithPassion #LiteraryLove #StorytellingSoul",
+        "hashtags": "#WriteWithPassion #LiteraryLove #StorytellingSoul"
+      },
+      {
+        "number": 2,
+        "caption": "Lost in the labyrinth of imagination, where thoughts take flight and dreams collide. #WritingEscape #ThoughtfulThursday #CreativeCorner",
+        "hashtags": "#WritingEscape #ThoughtfulThursday #CreativeCorner"
+      },
+      {
+        "number": 3,
+        "caption": "Words are the paintbrushes of our minds, painting vibrant pictures that ignite the imagination. #WordplayWednesday #ArtOfWriting #LiteraryVibes",
+        "hashtags": "#WordplayWednesday #ArtOfWriting #LiteraryVibes"
+      },
+      {
+        "number": 4,
+        "caption": "In the realm of literature, where characters come alive and stories unfold, we find solace and inspiration. #BookishDelights #ReadingEscape #MondayMotivation",
+        "hashtags": "#BookishDelights #ReadingEscape #MondayMotivation"
+      },
+      {
+        "number": 5,
+        "caption": "Immerse yourself in the written word. Let it transport you to distant lands, introduce you to unforgettable characters, and spark a fire within. #ReadingIsLife #LiteraryJourney #LostInWords",
+        "hashtags": "#ReadingIsLife #LiteraryJourney #LostInWords"
+      }
+    ]
+    \`\`\`
+    `;
 
     const request = {
       "contents": [
