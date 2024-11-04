@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Bookmark, BookmarkCheck } from 'lucide-react';
 
 interface Caption {
     number: number;
@@ -37,6 +37,8 @@ interface CaptionListProps {
 
 const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [savingIndex, setSavingIndex] = useState<number | null>(null);
+    const [savedIndexes, setSavedIndexes] = useState<number[]>([]);
 
     const parseGeminiResponse = (response: GeminiResponse): Caption[] => {
         try {
@@ -51,6 +53,9 @@ const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
 
     const captions = parseGeminiResponse(data);
 
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+
     const copyToClipboard = (caption: string, hashtags: string, index: number): void => {
         const textToCopy = `${caption}\n\n${hashtags}`;
         navigator.clipboard.writeText(textToCopy).then(() => {
@@ -60,6 +65,25 @@ const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
             }, 2000);
         });
     };
+
+    const handleSave = async (caption: string, hashtags: string, index: number) => {
+        setSavingIndex(index);
+        try {
+            // TODO: Create save function
+            // const success = await onSaveCaption(caption, hashtags);
+            await delay(1000);
+            const success = true
+            if (success) {
+                setSavedIndexes(prev => [...prev, index]);
+            }
+        } catch (error) {
+            console.error('Error saving caption:', error);
+        } finally {
+            setSavingIndex(null);
+        }
+    };
+
+    const isSaved = (index: number) => savedIndexes.includes(index);
 
     return (
         <div className="space-y-4">
@@ -84,24 +108,46 @@ const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
                             ))}
                         </div>
 
-                        {/* Copy Button */}
-                        <Button
-                            variant="outline"
-                            className="w-full flex items-center gap-2 justify-center"
-                            onClick={() => copyToClipboard(item.caption, item.hashtags, index)}
-                        >
-                            {copiedIndex === index ? (
-                                <>
-                                    <Check className="w-4 h-4" />
-                                    Copied!
-                                </>
-                            ) : (
-                                <>
-                                    <Copy className="w-4 h-4" />
-                                    Copy Caption & Hashtags
-                                </>
-                            )}
-                        </Button>
+                        <div className='flex gap-2'>
+                            {/* Copy Button */}
+                            <Button
+                                variant="outline"
+                                className="w-full flex items-center gap-2 justify-center"
+                                onClick={() => copyToClipboard(item.caption, item.hashtags, index)}
+                            >
+                                {copiedIndex === index ? (
+                                    <>
+                                        <Check className="w-4 h-4" />
+                                        Copied!
+                                    </>
+                                ) : (
+                                    <>
+                                        <Copy className="w-4 h-4" />
+                                        Copy
+                                    </>
+                                )}
+                            </Button>
+                            {/* Copy Button */}
+                            <Button
+                                variant="default"
+                                className="w-full flex items-center gap-2 justify-center"
+                                onClick={() => handleSave(item.caption, item.hashtags, index)}
+                            >
+                                {isSaved(index) ? (
+                                    <>
+                                        <BookmarkCheck className="w-4 h-4" />
+                                        Saved!
+                                    </>
+                                ) : savingIndex === index ? (
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    <>
+                                        <Bookmark className="w-4 h-4" />
+                                        Save
+                                    </>
+                                )}
+                            </Button>
+                        </div>
                     </div>
                 </Card>
             ))}
