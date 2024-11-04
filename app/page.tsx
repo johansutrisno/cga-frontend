@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from 'axios'
+import CaptionList from '@/components/shared/caption-list'
 
 interface Caption {
   text: string;
@@ -22,7 +23,7 @@ export default function Home() {
     hashtags: '',
   })
   const [image, setImage] = useState<File | null>(null)
-  const [generatedCaption, setGeneratedCaption] = useState<Caption[]>([])
+  const [geminiResponse, setGeminiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,7 +58,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const prompt = `Give me a list of creative captions for instagram with the writing style ${formData.languageStyle}, brand tone ${formData.brandTone}, target audience ${formData.targetAudience}, and hashtags ${formData.hashtags}. The desired caption length is ${formData.captionLength}, with the main theme being ${formData.keywords}.`
+    const prompt = `Give me a list of creative captions for instagram with the writing style ${formData.languageStyle}, brand tone ${formData.brandTone}, target audience ${formData.targetAudience}, and hashtags ${formData.hashtags}. The desired caption length is ${formData.captionLength}, with the main theme being ${formData.keywords}. Give me a response captions list with json format number, caption, hashtag.`
 
     const request = {
       "contents": [
@@ -79,9 +80,7 @@ export default function Home() {
       console.log('Response:', response.data);
       // Handle success (e.g., show success message, clear form)
       if (response.data && response.data.candidates && response.data.candidates.length > 0) {
-        const rawCaptions = response.data.candidates[0].content.parts[0].text;
-        const processedCaptions = processCaptions(rawCaptions);
-        setGeneratedCaption(processedCaptions);
+        setGeminiResponse(response.data)
       } else {
         console.error('Error:', 'There is no captions');
       }
@@ -176,21 +175,8 @@ export default function Home() {
       <div className="w-full md:w-1/2">
         <h2 className="text-2xl font-bold mb-4">Generated Caption</h2>
         <div className="border p-4 rounded-md min-h-[200px]">
-          {generatedCaption.length > 0 ? (
-            <div>
-              {generatedCaption.map((caption, index) => (
-                <div key={index} className="mb-6 p-4 bg-gray-100 rounded">
-                  <p className="text-lg mb-2">{caption.text}</p>
-                  <div className="flex flex-wrap">
-                    {caption.hashtags.map((hashtag, hashIndex) => (
-                      <span key={hashIndex} className="mr-2 mb-2 px-2 py-1 bg-blue-200 text-blue-800 rounded-full text-sm">
-                        {hashtag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+          {geminiResponse && !isLoading ? (
+            <CaptionList data={geminiResponse} />
           ) : (
             <p className="text-muted-foreground">Your generated caption will appear here.</p>
           )}
