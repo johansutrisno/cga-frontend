@@ -17,6 +17,8 @@ model User {
   clerkId   String    @unique
   email     String    @unique
   captions  Caption[]
+
+  @@map("users")
 }
 
 model Caption {
@@ -25,7 +27,9 @@ model Caption {
   updatedAt DateTime @updatedAt
   userId    String
   content   String
+  hashtags  String
   user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@map("captions")
 }
