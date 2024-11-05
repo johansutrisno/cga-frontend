@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { createCaptionRequest } from '@/types/caption';
 
 interface Caption {
     number: number;
@@ -64,9 +63,6 @@ const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
 
     const captions = parseGeminiResponse(data);
 
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-
     const copyToClipboard = (caption: string, hashtags: string, index: number): void => {
         const textToCopy = `${caption}\n\n${hashtags}`;
         navigator.clipboard.writeText(textToCopy).then(() => {
@@ -97,13 +93,21 @@ const CaptionList: React.FC<CaptionListProps> = ({ data }) => {
 
         setSavingIndex(index);
         try {
-            // TODO: Create save function
-            // const success = await onSaveCaption(caption, hashtags);
-            await delay(1000);
-            const success = true
-            if (success) {
-                setSavedIndexes(prev => [...prev, index]);
+            const request = createCaptionRequest(caption, hashtags)
+            const response = await fetch('/api/captions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(request),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to save caption');
             }
+
+            setSavedIndexes(prev => [...prev, index]);
         } catch (error) {
             console.error('Error saving caption:', error);
         } finally {
