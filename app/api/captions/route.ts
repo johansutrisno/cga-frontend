@@ -22,9 +22,13 @@ export async function POST(
 
         const savedCaption = await prisma.caption.create({
             data: {
-                userId: user.id,
-                content,
-                hashtags,
+                user: {
+                    connect: {
+                        id: user.id
+                    }
+                },
+                content: content,
+                hashtags: hashtags,
             }
         });
 
