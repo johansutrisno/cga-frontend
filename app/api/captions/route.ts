@@ -3,11 +3,39 @@ import { prisma } from '@/utils/db'
 import { NextResponse } from 'next/server';
 import { CreateCaptionResponse, CreateCaptionRequest } from '@/types/caption';
 
+export async function GET() {
+    try {
+        const user = await getUserByClerkID()
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const captions = await prisma.caption.findMany({
+            where: {
+                userId: user.id
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        })
+
+        return NextResponse.json({ data: captions })
+    } catch (error) {
+        console.error('Error fetching captions:', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    }
+}
+
 export async function POST(
     req: Request
 ): Promise<NextResponse<CreateCaptionResponse | { error: string }>> {
     try {
         const user = await getUserByClerkID()
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
         const body: CreateCaptionRequest = await req.json();
 
