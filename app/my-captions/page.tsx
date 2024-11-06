@@ -63,6 +63,7 @@ const MyCaptionsPage = () => {
                 key={index}
                 caption={item.content}
                 hashtags={item.hashtags}
+                saved={true}
             />
         ))}
     </div>)
