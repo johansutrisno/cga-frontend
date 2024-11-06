@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import CaptionItem from '@/components/shared/caption-item'
 import type { Caption } from '@/types/caption'
-import { ImageIcon } from 'lucide-react'
 import { Separator } from "@/components/ui/separator"
 
 const MyCaptionsPage = () => {

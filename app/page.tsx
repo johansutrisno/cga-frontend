@@ -7,12 +7,6 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from 'axios'
 import CaptionList from '@/components/shared/caption-list'
-import Image from 'next/image'
-
-interface Caption {
-  text: string;
-  hashtags: string[];
-}
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -23,7 +17,6 @@ export default function Home() {
     targetAudience: '',
     hashtags: '',
   })
-  const [image, setImage] = useState<File | null>(null)
   const [geminiResponse, setGeminiResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,26 +28,6 @@ export default function Home() {
   const handleSelectChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0])
-    }
-  }
-
-  const processCaptions = (rawText: string): Caption[] => {
-    const lines = rawText.split('\n');
-    return lines.map(line => {
-      const match = line.match(/\d+\.\s"(.+)"\s(.+)/);
-      if (match) {
-        return {
-          text: match[1],
-          hashtags: match[2].split(' ')
-        };
-      }
-      return { text: line, hashtags: [] };
-    });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -189,10 +162,6 @@ export default function Home() {
             />
           </div>
           <div>
-            <Label htmlFor="image">Image</Label>
-            <Input id="image" type="file" onChange={handleImageChange} accept="image/*" />
-          </div>
-          <div>
             <Label htmlFor="hashtags">Hashtags</Label>
             <Input
               id="hashtags"
@@ -214,17 +183,6 @@ export default function Home() {
             <p className="text-muted-foreground">Your generated caption will appear here.</p>
           )}
         </div>
-
-        {image && (
-          <div className="mt-4">
-            <h3 className="text-xl font-semibold mb-2">Uploaded Image</h3>
-            <Image
-              src={URL.createObjectURL(image)}
-              alt="Uploaded image"
-              className="max-w-full h-auto rounded-md"
-            />
-          </div>
-        )}
       </div>
     </div>
   );
