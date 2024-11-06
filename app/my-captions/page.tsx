@@ -61,6 +61,7 @@ const MyCaptionsPage = () => {
         {captions.map((item, index) => (
             <CaptionItem
                 key={index}
+                id={item.id}
                 caption={item.content}
                 hashtags={item.hashtags}
                 saved={true}
