@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import CaptionItem from '@/components/shared/caption-item'
 import type { Caption } from '@/types/caption'
+import { ImageIcon } from 'lucide-react'
+import { Separator } from "@/components/ui/separator"
 
 const MyCaptionsPage = () => {
     const [captions, setCaptions] = useState<Caption[]>([])
@@ -57,16 +59,26 @@ const MyCaptionsPage = () => {
         )
     }
 
-    return (<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {captions.map((item, index) => (
-            <CaptionItem
-                key={index}
-                id={item.id}
-                caption={item.content}
-                hashtags={item.hashtags}
-                saved={true}
-            />
-        ))}
+    return (<div className='container mx-auto space-y-6'>
+        <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">
+                Your creative space for organizing and reviewing all your image captions. Click on any caption to edit or view details.
+            </p>
+        </div>
+
+        <Separator className="my-6" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {captions.map((item, index) => (
+                <CaptionItem
+                    key={index}
+                    id={item.id}
+                    caption={item.content}
+                    hashtags={item.hashtags}
+                    saved={true}
+                />
+            ))}
+        </div>
     </div>)
 }
 

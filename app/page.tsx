@@ -66,27 +66,27 @@ export default function Home() {
     [
       {
         "number": 1,
-        "caption": "Embrace the power of words. Let your pen dance across the page, weaving a tapestry of emotions and ideas. #WriteWithPassion #LiteraryLove #StorytellingSoul",
+        "caption": "Embrace the power of words. Let your pen dance across the page, weaving a tapestry of emotions and ideas.",
         "hashtags": "#WriteWithPassion #LiteraryLove #StorytellingSoul"
       },
       {
         "number": 2,
-        "caption": "Lost in the labyrinth of imagination, where thoughts take flight and dreams collide. #WritingEscape #ThoughtfulThursday #CreativeCorner",
+        "caption": "Lost in the labyrinth of imagination, where thoughts take flight and dreams collide.",
         "hashtags": "#WritingEscape #ThoughtfulThursday #CreativeCorner"
       },
       {
         "number": 3,
-        "caption": "Words are the paintbrushes of our minds, painting vibrant pictures that ignite the imagination. #WordplayWednesday #ArtOfWriting #LiteraryVibes",
+        "caption": "Words are the paintbrushes of our minds, painting vibrant pictures that ignite the imagination.",
         "hashtags": "#WordplayWednesday #ArtOfWriting #LiteraryVibes"
       },
       {
         "number": 4,
-        "caption": "In the realm of literature, where characters come alive and stories unfold, we find solace and inspiration. #BookishDelights #ReadingEscape #MondayMotivation",
+        "caption": "In the realm of literature, where characters come alive and stories unfold, we find solace and inspiration.",
         "hashtags": "#BookishDelights #ReadingEscape #MondayMotivation"
       },
       {
         "number": 5,
-        "caption": "Immerse yourself in the written word. Let it transport you to distant lands, introduce you to unforgettable characters, and spark a fire within. #ReadingIsLife #LiteraryJourney #LostInWords",
+        "caption": "Immerse yourself in the written word. Let it transport you to distant lands, introduce you to unforgettable characters, and spark a fire within.",
         "hashtags": "#ReadingIsLife #LiteraryJourney #LostInWords"
       }
     ]
